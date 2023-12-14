@@ -1,0 +1,250 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Rebuild BootRom btr2fpga",
+            "command": "python",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--rebuild",
+                "btr2fpga",
+                "2>btr2fpga.log"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Rebuild BootRom btr2fpga --simulate zebu",
+            "command": "python3",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--rebuild",
+                "btr2fpga",
+                "--simulate",
+                "zebu"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Rebuild BootRom btr2fpga --simulate zebu output asm",
+            "dependsOn": [
+                "Rebuild BootRom btr2fpga --simulate zebu"
+            ],
+            "command": "riscv64-unknown-elf-objdump",
+            "args": [
+                "-S",
+                "btr_test.elf",
+                ">btr_test.asm"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom/build/fpga_build"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Rebuild BootRom btr2qemu",
+            "command": "python",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--rebuild",
+                "btr2qemu",
+                "2>btr2qemu.log"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Codesize",
+            "command": "python",
+            "args": [
+                "codesize.py"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Remake BootRom btr2fpga",
+            "command": "python3",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--remake",
+                "btr2fpga"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Remake BootRom btr2fpga --simulate zebu",
+            "command": "python3",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--remake",
+                "btr2fpga",
+                "--simulate",
+                "zebu"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Rebuild BootRom btr2fpga --simulate fpga",
+            "command": "python3",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--rebuild",
+                "btr2fpga",
+                "--simulate",
+                "fpga"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Remake BootRom btr2fpga --simulate fpga",
+            "command": "python3",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--remake",
+                "btr2fpga",
+                "--simulate",
+                "fpga"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Upload to VCS",
+            "command": "python3",
+            "args": [
+                "tool/vcsSimulate.py"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Rebuild BootRom btr2qemu --simulate qemu",
+            "command": "python",
+            "args": [
+                "tool/bootromBuildTest.py",
+                "--rebuild",
+                "btr2qemu",
+                "--simulate",
+                "qemu"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/bootrom"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(RISCV)Run Qemu Server BootRom",
+            "command": "/home/nic/develop/bootrom/qemu/build/qemu-system-riscv32",
+            "args": [
+                "-nographic",
+                "-machine",
+                "sifive_e",
+                "-kernel",
+                "/home/nic/develop/bootrom/bootrom/build/qemu_build/btr_test.elf",
+                "-s",
+                "-S"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "(RISCV)Run Qemu  BootRom",
+            "command": "/home/nic/develop/bootrom/qemu/build/qemu-system-riscv32",
+            "args": [
+                "-nographic",
+                "-machine",
+                "sifive_e",
+                "-kernel",
+                "/home/nic/develop/bootrom/bootrom/build/qemu_build/btr_test.elf"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Kill Qemu Server(RISCV)",
+            "command": "ps -C qemu-* --no-headers | cut -d \\  -f 1 | xargs pkill -9"
+        },
+        {
+            "type": "shell",
+            "label": "Kill Qemu",
+            "command": "pkill -9 qemu"
+        },
+        {
+            "type": "shell",
+            "label": "Upload nsign image to zebu",
+            "command": "./zebu.sh",
+            "options": {
+                "cwd": "/home/nic/develop/bootrom/nsign/test/output/emmc_usb_spi"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Upload Linux Image to zebu",
+            "command": "./putscript_zebu_dual_die.sh",
+            "options": {
+                "cwd": "/home/nic/develop/ucore-dev/uCore-Tutorial-Code-2023S"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(uCore)Make User",
+            "command": "make",
+            "args": [
+                "test",
+                "user"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/ucore-dev/uCore-Tutorial-Code-2023S"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(uCore)Run QEMU",
+            "command": "make",
+            "args": [
+                "debug_vscode"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/ucore-dev/uCore-Tutorial-Code-2023S"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "(uCore)Make Clean",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "/home/nic/develop/ucore-dev/uCore-Tutorial-Code-2023S"
+            }
+        }
+    ]
+}

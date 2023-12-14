@@ -1,0 +1,97 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "enter program name, for example ${workspaceFolder}/a.out",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "C/C++(RISCV) - Debug uCore",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}",
+            "args": [],
+            "stopAtEntry": true,
+            "targetArchitecture": "arm",
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "miDebuggerPath": "/home/nic/develop/toolchain/bin/riscv64-unknown-elf-gdb", // RISC-V 工具链中的 gdb
+            "miDebuggerServerAddress": "127.0.0.1:1234",
+            "externalConsole": true,
+            // "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    // "text": "-enable-pretty-printing",
+                    "text": "set target-async off",
+                    "ignoreFailures": false,
+                    // "target remote": 1234
+                }
+            ],
+            "launchCompleteCommand": "None",
+            "customLaunchSetupCommands": [
+                {
+                    "text": "file /home/nic/develop/ucore-dev/uCore-Tutorial-Code-2023S/user/target/elf/ch5b_usertest",
+                    "description": "load file to gdb",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "target remote :1234",
+                    "description": "connect to server",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "b _start",
+                    "description": "set breakpoints at _start",
+                    "ignoreFailures": false
+                },
+            ],
+        },
+        {
+            "name": "C/C++(x86) Debug QEMU Running BootROM",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/user/bootrom_fix/qemu/build/qemu-system-riscv32",
+            "args": [
+                "-nographic",
+                "-machine",
+                "sifive_e",
+                "-kernel",
+                "/home/user/bootrom_fix/bootrom/build/qemu_build/btr_test.elf",
+                "-s",
+                "-S"
+            ],
+            "stopAtEntry": true,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
