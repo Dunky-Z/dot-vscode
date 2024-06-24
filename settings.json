@@ -8,13 +8,13 @@
     "editor.formatOnType": false,
     // 关闭 C/C++ Extension Pack 插件的提示 防止其与 clangd 冲突
     // "C_Cpp.intelliSenseEngineFallback": "disabled",
-    "C_Cpp.intelliSenseEngine": "disabled",
-    "C_Cpp.autocomplete": "disabled", // So you don't get autocomplete from both extensions.
+    // "C_Cpp.intelliSenseEngine": "disabled",
+    // "C_Cpp.autocomplete": "disabled", // So you don't get autocomplete from both extensions.
     // 指向 clangd 路径
     "clangd.path": "/usr/bin/clangd",
     "clangd.arguments": [
         // compelie_commands.json 文件的目录位置
-        "--compile-commands-dir=/home/nic/develop/100ask_stm32mp157_pro-sdk/Linux-5.4/compile_commands.json",
+        "--compile-commands-dir=/home/user/ips-workspace/opensbi/build/compile_commands.json",
         // 让 Clangd 生成更详细的日志
         "--log=verbose",
         // 输出的 JSON 文件更美观
@@ -45,6 +45,8 @@
         "--pch-storage=memory",
         // 启用这项时，补全函数时，将会给参数提供占位符
         // 我选择禁用
-        "--function-arg-placeholders=false",
+        "--function-arg-placeholders=true",
+        "--query-driver=/home/user/ips-workspace/toolchain/bin/riscv64-unknown-linux-gnu-*",
+        "-target riscv64-unknown-linux-gnu"
     ],
 }
