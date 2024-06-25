@@ -9,3 +9,12 @@
 进入到项目目录下，执行 `git clone https://github.com/Dunky-Z/dot-vscode.git .vscode`，将本项目的配置文件克隆到 `.vscode` 目录下即可。具体配置文件说明可以参考下文进行修改。
 
 generate_compdb.py 程序来自项目[amezin/vscode-linux-kernel](https://github.com/amezin/vscode-linux-kernel)。
+
+
+编译 opensbi
+
+```bash
+bear  --append -o build/compile_commands.json  make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu-  PLATFORM=generic   -j33
+# 跑测试
+bear  --append -o build/compile_commands.json  make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu-  PLATFORM=generic run  -j33
+```
