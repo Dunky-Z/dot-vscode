@@ -42,9 +42,16 @@ git send-email --to=zhuwenjun@eswincomputing.com --cc=qinhaijun@eswincomputing.c
 git send-email --to=jinyanjiang@eswincomputing.com --cc=zhuwenjun@eswincomputing.com,zhengyu@eswincomputing.com
 
 # OpenSBI 社区
-git format-patch --cover-letter -o ../patch/opensbi HEAD^
+git format-patch -o ../patch/opensbi HEAD^
+git format-patch --cover-letter -o ../patch/opensbi/test-math HEAD^
 git send-email --to=opensbi@lists.infradead.org  /home/user/ips-workspace/patch/opensbi/
 
+# Buildroot 社区
+git format-patch --cover-letter -o ../patch/buildroot HEAD^
+git format-patch -o ../patch/buildroot HEAD^
+# 获取需要抄送的开发者
+./utils/get-developers /home/user/ips-workspace/patch/buildroot/
+git send-email --to buildroot@buildroot.org
 ```
 
 
