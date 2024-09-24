@@ -245,6 +245,105 @@
             "options": {
                 "cwd": "/home/nic/develop/ucore-dev/uCore-Tutorial-Code-2023S"
             }
-        }
+        },
+        {
+            "type": "shell",
+            "label": "(EIC7702)delete fitImage in tftp",
+            "command": "rm",
+            "args": [
+                "fitImage"
+            ],
+            "options": {
+                "cwd": "/tftproot"
+            }
+        },
+        {
+            "label": "(EIC7702)delete es-m2-demo and tty-demo in tftp",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "es-m2-demo",
+                "tty-demo"
+            ],
+            "options": {
+                "cwd": "/tftproot"
+            },
+            "problemMatcher": [],
+            "description": "Deletes es-m2-demo and tty-demo files from the tftp root directory."
+        },
+        {
+            "label": "(EIC7702)cp es-m2-demo and tty-demo to tftp",
+            "type": "shell",
+            "dependsOn": [
+                "(EIC7702)delete es-m2-demo and tty-demo in tftp"
+            ],
+            "command": "bash",
+            "args": [
+                "-c",
+                "cp output/build/es-m2-demo/es-m2-demo output/build/es-m2-demo/tty-demo /tftproot/"
+            ],
+            "options": {
+                "cwd": "/home/user/win2030/win2030/buildroot"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Copies es-m2-demo and tty-demo binaries to the tftp root directory."
+        },
+        {
+            "type": "shell",
+            "label": "(EIC7702)cp fitImage to tftp",
+            "dependsOn": [
+                "(EIC7702)delete fitImage in tftp"
+            ],
+            "command": "cp",
+            "args": [
+                "output/images/fitImage",
+                "/tftproot"
+            ],
+            "options": {
+                "cwd": "/home/user/win2030/win2030/buildroot"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(EIC7702)cp ipcm_drv.ko to tftp",
+            "command": "cp",
+            "args": [
+                "output/build/es-ipcm-driver/ipcm_drv.ko",
+                "/tftproot"
+            ],
+            "options": {
+                "cwd": "/home/user/win2030/win2030/buildroot"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(EIC7702)delete rootfs.ext4 in tftp",
+            "command": "rm",
+            "args": [
+                "rootfs.ext4"
+            ],
+            "options": {
+                "cwd": "/tftproot"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(EIC7702)cp rootfs.ext4 to tftp",
+            "command": "cp",
+            "dependsOn": [
+                "(EIC7702)delete rootfs.ext4 in tftp"
+            ],
+            "args": [
+                "output/images/rootfs.ext4",
+                "/tftproot"
+            ],
+            "options": {
+                "cwd": "/home/user/win2030/win2030/buildroot"
+            }
+        },
     ]
 }
