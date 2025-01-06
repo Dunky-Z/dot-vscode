@@ -283,7 +283,7 @@
                 "cp output/build/es-m2-demo/es-m2-demo output/build/es-m2-demo/tty-demo /tftproot/"
             ],
             "options": {
-                "cwd": "/home/user/win2030/win2030/buildroot"
+                "cwd": "/home/user/vpu7702/win2030/buildroot"
             },
             "problemMatcher": [],
             "group": {
@@ -304,7 +304,7 @@
                 "/tftproot"
             ],
             "options": {
-                "cwd": "/home/user/win2030/win2030/buildroot"
+                "cwd": "/home/user/vpu7702/win2030/buildroot"
             }
         },
         {
@@ -316,15 +316,15 @@
                 "/tftproot"
             ],
             "options": {
-                "cwd": "/home/user/win2030/win2030/buildroot"
+                "cwd": "/home/user/vpu7702/win2030/buildroot"
             }
         },
         {
             "type": "shell",
-            "label": "(EIC7702)delete rootfs.ext4 in tftp",
+            "label": "(EIC7702)delete rootfs.ext2 in tftp",
             "command": "rm",
             "args": [
-                "rootfs.ext4"
+                "rootfs.ext2"
             ],
             "options": {
                 "cwd": "/tftproot"
@@ -332,18 +332,113 @@
         },
         {
             "type": "shell",
-            "label": "(EIC7702)cp rootfs.ext4 to tftp",
+            "label": "(EIC7702)cp rootfs.ext2 to tftp",
             "command": "cp",
             "dependsOn": [
-                "(EIC7702)delete rootfs.ext4 in tftp"
+                "(EIC7702)delete rootfs.ext2 in tftp"
             ],
             "args": [
-                "output/images/rootfs.ext4",
+                "output/images/rootfs.ext2",
                 "/tftproot"
             ],
             "options": {
-                "cwd": "/home/user/win2030/win2030/buildroot"
+                "cwd": "/home/user/vpu7702/win2030/buildroot"
             }
+        },
+        {
+            "type": "shell",
+            "label": "(EIC7702)delete bootloader in tftp",
+            "command": "rm",
+            "args": [
+                "nsign_bootloader_secboot_ddr_16G.bin"
+            ],
+            "options": {
+                "cwd": "/tftproot"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(EIC7702)cp bootloader to tftp",
+            "command": "cp",
+            "dependsOn": [
+                "(EIC7702)delete bootloader in tftp"
+            ],
+            "args": [
+                "output/images/nsign/nsign_bootloader_secboot_ddr_16G.bin",
+                "/tftproot"
+            ],
+            "options": {
+                "cwd": "/home/user/vpu7702/win2030/buildroot"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(minitester)build u84.elf",
+            "command": "bash",
+            "dependsOn": [],
+            "args": [
+                "-c",
+                "./build_pcie_firmware.sh -p zebu -m pcie -a ep -d 0 -g 1 -l 1"
+            ],
+            "options": {
+                "cwd": "/home/user/win2030/win2030/minitester-zhouliang"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(minitester)sign u84.elf",
+            "command": "./nsign",
+            "dependsOn": [],
+            "args": [],
+            "options": {
+                "cwd": "/home/user/vpu7702/win2030/buildroot/eic7700_evb_uboot2024/board/system/tools/nsign"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(EPID)save logs",
+            "command": "./save-log.sh",
+            "dependsOn": [],
+            "args": [],
+            "options": {
+                "cwd": "/home/user/win2030/win2030"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(EPID)delete fitImage in /lib/firmware/eswin/",
+            "command": "rm",
+            "dependsOn": [
+                "(EPID)backup fitImage in /lib/firmware/eswin/"
+            ],
+            "args": [
+                "/lib/firmware/eswin/fitImage"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "(EPID) cp fitImage to /lib/firmware/eswin/",
+            "command": "cp",
+            "dependsOn": [
+                "(EPID)delete fitImage in /lib/firmware/eswin/"
+            ],
+            "args": [
+                "output/images/fitImage",
+                "/lib/firmware/eswin/"
+            ],
+            "options": {
+                "cwd": "/home/user/vpu7702/win2030/buildroot"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "(EPID)backup fitImage in /lib/firmware/eswin/",
+            "command": "cp",
+            "dependsOn": [],
+            "args": [
+                "/lib/firmware/eswin/fitImage",
+                "/lib/firmware/eswin/fitImage.bak"
+            ]
         },
     ]
 }
