@@ -1,0 +1,5 @@
+pu port /dev/ttyUSB2
+pu addcarriagereturn Yes
+pu log Yes
+pu logfile /home/user/win2030/win2030/debug-log/device/minicom.log
+pu rtscts No

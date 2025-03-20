@@ -254,7 +254,7 @@
                 "fitImage"
             ],
             "options": {
-                "cwd": "/tftproot"
+                "cwd": "/tftpboot"
             }
         },
         {
@@ -266,7 +266,7 @@
                 "tty-demo"
             ],
             "options": {
-                "cwd": "/tftproot"
+                "cwd": "/tftpboot"
             },
             "problemMatcher": [],
             "description": "Deletes es-m2-demo and tty-demo files from the tftp root directory."
@@ -280,7 +280,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cp output/build/es-m2-demo/es-m2-demo output/build/es-m2-demo/tty-demo /tftproot/"
+                "cp output/build/es-m2-demo/es-m2-demo output/build/es-m2-demo/tty-demo /tftpboot/"
             ],
             "options": {
                 "cwd": "/home/user/vpu7702/win2030/buildroot"
@@ -301,7 +301,7 @@
             "command": "cp",
             "args": [
                 "output/images/fitImage",
-                "/tftproot"
+                "/tftpboot"
             ],
             "options": {
                 "cwd": "/home/user/vpu7702/win2030/buildroot"
@@ -313,7 +313,7 @@
             "command": "cp",
             "args": [
                 "output/build/es-ipcm-driver/ipcm_drv.ko",
-                "/tftproot"
+                "/tftpboot"
             ],
             "options": {
                 "cwd": "/home/user/vpu7702/win2030/buildroot"
@@ -327,7 +327,7 @@
                 "rootfs.ext2"
             ],
             "options": {
-                "cwd": "/tftproot"
+                "cwd": "/tftpboot"
             }
         },
         {
@@ -339,7 +339,7 @@
             ],
             "args": [
                 "output/images/rootfs.ext2",
-                "/tftproot"
+                "/tftpboot"
             ],
             "options": {
                 "cwd": "/home/user/vpu7702/win2030/buildroot"
@@ -353,7 +353,7 @@
                 "nsign_bootloader_secboot_ddr_16G.bin"
             ],
             "options": {
-                "cwd": "/tftproot"
+                "cwd": "/tftpboot"
             }
         },
         {
@@ -365,7 +365,7 @@
             ],
             "args": [
                 "output/images/nsign/nsign_bootloader_secboot_ddr_16G.bin",
-                "/tftproot"
+                "/tftpboot"
             ],
             "options": {
                 "cwd": "/home/user/vpu7702/win2030/buildroot"
