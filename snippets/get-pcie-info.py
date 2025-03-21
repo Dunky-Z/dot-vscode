@@ -1,6 +1,8 @@
 import subprocess
 import re
 import argparse
+import os
+import logging
 
 def convert_pci_bdf_to_decimal(pci_bdf):
     """
@@ -29,12 +31,72 @@ def convert_pci_bdf_to_decimal(pci_bdf):
         return None
     return decimal
 
-def get_pcie_info(interface_name):
+def bus_location_to_bdf(bus_location):
     """
-    Gets PCIe device information for a network interface, including bus ID,
-    whether it is behind a PCIe bridge, and related bridge information.
+    Convert Bus Location To PCI BDF 
+    For example, "1_0_0" -> "01:00.0"
+    """
+    try:
+        logging.debug(f"bus_location: {bus_location}")
+        parts = list(map(int, bus_location.split('_')))
+        if len(parts) != 3:
+            return None
+        return f"{parts[0]:02x}:{parts[1]:02x}.{parts[2]}"
+    except (ValueError, AttributeError):
+        return None
+
+
+def get_pci_address_from_device(device_path):
+    """
+    Find the BDF corresponding to the device through the 
+    /proc/driver/eswin/pacs/ directory
+    """
+    proc_path = "/proc/driver/eswin/pacs"
+    if not os.path.exists(proc_path):
+        print(f"Error: ESWIN proc path not found at {proc_path}")
+        return None
+    
+    # Traverse all subdirectories
+    for entry in os.listdir(proc_path):
+        bdf_dir = os.path.join(proc_path, entry)
+        info_file = os.path.join(bdf_dir, "information")
+        
+        if not os.path.isfile(info_file):
+            continue
+            
+        try:
+            with open(info_file, 'r') as f:
+                content = f.read()
+                
+                inode_match = re.search(r'Device inode path:\s*(.+)\s*', content)
+                if not inode_match or inode_match.group(1).strip() != device_path:
+                    continue
+                
+                # Extract Bus Location
+                bus_loc_match = re.search(r'Bus Location:\s*([0-9_]+)', content)
+                if not bus_loc_match:
+                    print(f"Warn: No Bus Location found in {info_file}")
+                    return None
+                
+                # Convert Bus Location to BDF
+                bdf = bus_location_to_bdf(bus_loc_match.group(1))
+                if not bdf:
+                    print(f"Warn: Invalid Bus Location format in {info_file}")
+                    return None
+                
+                return f"0000:{bdf}" if ':' not in bdf else bdf
+                
+        except Exception as e:
+            print(f"Error reading {info_file}: {str(e)}")
+    
+    print(f"Error: No matching device found for {device_path}")
+    return None
+        
+def get_pcie_info(device_path):
+    """
+    Gets PCIe device information for a device.
     Args:
-      interface_name: The name of the network interface, e.g., "eth0" or "enp0s3".
+      device_path: The name of device.
     Returns:
       A dictionary containing the following keys:
         "bus_id": Bus ID of the network interface's PCIe device (e.g., "0000:01:00.0").
@@ -44,24 +106,20 @@ def get_pcie_info(interface_name):
       Returns None on error.
     """
     try:
-        # Get the PCI address of the network interface using ethtool
-        ethtool_cmd = ["ethtool", "-i", interface_name]
-        ethtool_output = subprocess.check_output(ethtool_cmd, universal_newlines=True).strip()
-        pci_id_line = next((line for line in ethtool_output.splitlines() if "bus-info" in line), None)
-        if not pci_id_line:
-            print(f"Error: Could not determine PCI address for interface {interface_name}")
+        # Get PCI address from device
+        pci_id = get_pci_address_from_device(device_path)
+        logging.debug(f"pci_id: {pci_id}")
+        if not pci_id:
+            print(f"Error: Cannot find PCI address for {device_path}")
             return None
-        # Extract the PCI address from the line
-        pci_id_line = pci_id_line.split()[-1].strip()
-        # print(f"PCI address of {interface_name}: {pci_id_line}")
 
         # Get PCIe device information using lspci
-        lspci_cmd = ["lspci", "-vvv", "-s", pci_id_line]
+        lspci_cmd = ["lspci", "-vvv", "-s", pci_id]
         lspci_output = subprocess.check_output(lspci_cmd, universal_newlines=True).strip()
-        # print(f"lspci output for {pci_id_line}:\n{lspci_output}")
+        logging.debug(f"lspci_output: {lspci_output}")
 
         result = {
-            "bus_id": pci_id_line,
+            "bus_id": pci_id,
             "in_bridge": 0,
             "bridge_bus_id": None,
             "child_bus_id": None
@@ -96,12 +154,13 @@ def format_dec_value(value):
     return str(value) if value is not None else "N/A"
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Get PCIe information for a network interface.")
-    parser.add_argument("interface_name", help="The name of the network interface (e.g., eth0)")
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.debug("Start get_pcie_info")
+    parser = argparse.ArgumentParser(description="Get PCIe information for a device.")
+    parser.add_argument("device_path", help="The path to the device (e.g., /dev/eswin_dev0).")
     args = parser.parse_args()
-
-    interface_name = args.interface_name
-    pcie_info = get_pcie_info(interface_name)
+    pcie_info = get_pcie_info(args.device_path)
 
     if pcie_info:
         # Convert BDF strings to decimal values
@@ -115,4 +174,4 @@ if __name__ == "__main__":
         print(f"bridge_bus_id: {format_dec_value(bridge_bus_id_dec)}")
         print(f"bridge_sub_bus_id: {format_dec_value(child_bus_id_dec)}")
     else:
-        print(f"Failed to retrieve PCIe information for {interface_name}.")
+        print(f"Failed to retrieve PCIe information for {args.device_path}.")
